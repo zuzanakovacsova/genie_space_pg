@@ -1,0 +1,15 @@
+command:
+- "python"
+- "app.py"
+
+env:
+- name: "SPACE_ID"
+  value: "01f02a31663e19b0a18f1a2ed7a435a7"
+- name: "DB_HOST"
+  value: "instance-3e8daf18-367d-4ee9-8273-c71f238f9b69.database.cloud.databricks.com"
+- name: "DB_PORT"
+  value: "5432"
+- name: "DB_NAME"
+  value: "databricks_postgres"
+- name: "DB_USER"
+  value: "wenwen.xie@databricks.com"
