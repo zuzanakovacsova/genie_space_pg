@@ -10,28 +10,16 @@ from databricks.sdk.core import Config
 from sqlalchemy import create_engine, event, text
 import time
 
-load_dotenv(override=True)
-
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-CLIENT_ID = os.getenv("DATABRICKS_CLIENT_ID")
-
 logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv(override=True)
 
-# Databricks config
-app_config = Config()
-workspace_client = sdk.WorkspaceClient()
 
 # PostgreSQL config
-postgres_username = app_config.client_id
-postgres_host = os.getenv('DB_HOST')
-postgres_port = int(os.getenv('DB_PORT', '5432'))
-postgres_database = os.getenv('DB_NAME')
+postgres_username = os.getenv("DATABRICKS_CLIENT_ID")
+postgres_host = os.getenv("DB_HOST")
+postgres_port = os.getenv("DB_PORT")
+postgres_database = os.getenv("DB_NAME")
 
 # SQLAlchemy setup with token-aware connection pool
 postgres_pool = create_engine(
@@ -51,7 +39,7 @@ def provide_token(dialect, conn_rec, cargs, cparams):
     global postgres_password, last_password_refresh
     if postgres_password is None or time.time() - last_password_refresh > 900:
         print("Refreshing PostgreSQL OAuth token")
-        postgres_password = workspace_client.config.oauth_token().access_token
+        postgres_password = tokenminter.get_token()
         last_password_refresh = time.time()
 
     cparams["password"] = postgres_password

@@ -83,8 +83,6 @@ class ChatDatabase:
         with self.get_db_connection() as conn:
             try:
                 # Start transaction
-                conn.execute(text('BEGIN'))
-                
                 logger.info(f"Saving message: session_id={session_id}, user_id={user_id}, message_id={message.message_id}")
                 
                 # Check if session exists

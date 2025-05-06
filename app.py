@@ -7,12 +7,13 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 import sqlparse
-import requests
 from chat_database import ChatDatabase
 from typing import Tuple, Union, Optional
 from flask import Flask, jsonify
-from db_config import execute_query, get_connection
+from db_config import get_connection
 from sqlalchemy import text
+import logging
+logger = logging.getLogger(__name__)
 
 # Create Dash app
 app = dash.Dash(
@@ -400,7 +401,7 @@ def get_model_response(trigger_data, current_messages, chat_history):
     try:
         # Unpack the message_id from genie_query
         response, query_text, genie_message_id = genie_query(user_input)
-        
+        logger.info(f"DB: genie_message_id={genie_message_id}, query_text={query_text}, response={response}")
         if isinstance(response, str):
             content = dcc.Markdown(response, className="message-text")
         else:
@@ -487,7 +488,6 @@ def get_model_response(trigger_data, current_messages, chat_history):
             ])
         
         # Create bot response
-        print(f"DB: genie_message_id={genie_message_id}")
         bot_response = html.Div([
             html.Div([
                 html.Div(className="model-avatar"),
@@ -792,25 +792,6 @@ def handle_modal_actions(save_clicks, close_clicks,
 
     return [no_update] * 7
 
-@app.route('/')
-def hello_world():
-    try:
-        # Test database connection using connection pool
-        with get_connection() as conn:
-            result = conn.execute(text("SELECT COUNT(*) as count FROM genie_messages"))
-            row = result.fetchone()
-            count = row.count if row else 0
-            
-            return jsonify({
-                "status": "success",
-                "message": "Successfully connected to Database Instance!",
-                "message_count": count
-            })
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": f"Database connection error: {str(e)}"
-        }), 500
 
 if __name__ == "__main__":
     app.run_server(debug=True)
