@@ -10,7 +10,9 @@ import sqlparse
 import requests
 from chat_database import ChatDatabase
 from typing import Tuple, Union, Optional
-load_dotenv()
+from flask import Flask, jsonify
+from db_config import execute_query, get_connection
+from sqlalchemy import text
 
 # Create Dash app
 app = dash.Dash(
@@ -789,6 +791,26 @@ def handle_modal_actions(save_clicks, close_clicks,
         return [title, description, *suggestions, False]
 
     return [no_update] * 7
+
+@app.route('/')
+def hello_world():
+    try:
+        # Test database connection using connection pool
+        with get_connection() as conn:
+            result = conn.execute(text("SELECT COUNT(*) as count FROM genie_messages"))
+            row = result.fetchone()
+            count = row.count if row else 0
+            
+            return jsonify({
+                "status": "success",
+                "message": "Successfully connected to Database Instance!",
+                "message_count": count
+            })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Database connection error: {str(e)}"
+        }), 500
 
 if __name__ == "__main__":
     app.run_server(debug=True)

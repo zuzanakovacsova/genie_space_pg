@@ -5,6 +5,10 @@ import logging
 import threading
 from psycopg2 import pool
 from token_minter import tokenminter
+from databricks import sdk
+from databricks.sdk.core import Config
+from sqlalchemy import create_engine, event, text
+import time
 
 load_dotenv(override=True)
 
@@ -19,67 +23,44 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv(override=True)
 
-class TokenAwareConnectionPool:
-    def __init__(self, minconn=1, maxconn=10):
-        self.minconn = minconn
-        self.maxconn = maxconn
-        self._lock = threading.Lock()
-        self._pool = None
-        self._token = None
+# Databricks config
+app_config = Config()
+workspace_client = sdk.WorkspaceClient()
 
-    def _refresh_pool(self):
-        token = tokenminter.get_token()
-        if self._pool is not None:
-            self._pool.closeall()
-        self._pool = pool.ThreadedConnectionPool(
-            self.minconn, self.maxconn,
-            host=DB_HOST,
-            port=DB_PORT,
-            database=DB_NAME,
-            user=CLIENT_ID,
-            password=token,
-            sslmode='require'
-        )
-        self._token = token
-        logger.info("Refreshed connection pool with new token.")
+# PostgreSQL config
+postgres_username = app_config.client_id
+postgres_host = os.getenv('DB_HOST')
+postgres_port = int(os.getenv('DB_PORT', '5432'))
+postgres_database = os.getenv('DB_NAME')
 
-    def getconn(self):
-        with self._lock:
-            current_token = tokenminter.get_token()
-            if self._pool is None or self._token != current_token:
-                self._refresh_pool()
-            return self._pool.getconn()
+# SQLAlchemy setup with token-aware connection pool
+postgres_pool = create_engine(
+    f"postgresql+psycopg://{postgres_username}:@{postgres_host}:{postgres_port}/{postgres_database}",
+    pool_size=5,
+    max_overflow=10,
+    pool_timeout=30,
+    pool_recycle=1800  # Recycle connections after 30 minutes
+)
 
-    def putconn(self, conn):
-        with self._lock:
-            if self._pool:
-                self._pool.putconn(conn)
+postgres_password = None
+last_password_refresh = time.time()
 
-    def closeall(self):
-        with self._lock:
-            if self._pool:
-                self._pool.closeall()
-                self._pool = None
-                self._token = None
+@event.listens_for(postgres_pool, "do_connect")
+def provide_token(dialect, conn_rec, cargs, cparams):
+    """Refresh OAuth token every 15 minutes for PostgreSQL authentication."""
+    global postgres_password, last_password_refresh
+    if postgres_password is None or time.time() - last_password_refresh > 900:
+        print("Refreshing PostgreSQL OAuth token")
+        postgres_password = workspace_client.config.oauth_token().access_token
+        last_password_refresh = time.time()
 
-# Create a global pool instance
-global_pool = TokenAwareConnectionPool()
+    cparams["password"] = postgres_password
 
 def get_connection():
-    return global_pool.getconn()
+    """Get a connection from the pool."""
+    return postgres_pool.connect()
 
 def release_connection(conn):
-    global_pool.putconn(conn)
+    """Release a connection back to the pool."""
+    conn.close()
 
-def close_pool():
-    global_pool.closeall()
-
-def close_connection(conn):
-    """Close the database connection"""
-    if conn is not None:
-        try:
-            conn.close()
-            logger.info("Closed database connection")
-        except Exception as e:
-            logger.error(f"Error closing database connection: {str(e)}")
-            raise 
