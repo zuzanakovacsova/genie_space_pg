@@ -1,9 +1,18 @@
 # Databricks Genie API Integration Demo
 
 ![](./assets/genie_room0.png)
-![](./assets/genie_room1.png)
+![](./assets/genie_pg1.png)
+![](./assets/genie_pg2.png)
+![](./assets/genie_pg3.png)
+![](./assets/genie_pg4.png)
+![](./assets/genie_pg5.png)
 
 This repository demonstrates how to integrate Databricks' AI/BI Genie Conversation APIs into custom Databricks Apps applications, allowing users to interact with their structured data using natural language.
+
+## PostgreSQL Integration
+
+This app features a secure, token-aware integration with a Databricks-hosted PostgreSQL database. All chat history, message ratings, and session data are stored in PostgreSQL using Databricks OAuth tokens for authentication. The integration is managed via a custom connection pool in `db_config.py`
+
 
 ## Overview
 
@@ -19,6 +28,7 @@ The Databricks Genie Conversation APIs (in Public Preview) enable you to embed A
 - **Powered by Databricks Apps**: Deploy and run directly from your Databricks workspace with built-in security and scaling
 - **Zero Infrastructure Management**: Leverage Databricks Apps to handle hosting, scaling, and security
 - **Workspace Integration**: Access your data assets and models directly from your Databricks workspace
+- **PostgreSQL Integration**: All chat history, message ratings, and session data are stored in PostgreSQL using secure Databricks OAuth token management (see `db_config.py`)
 - **Natural Language Data Queries**: Ask questions about your data in plain English
 - **Stateful Conversations**: Maintain context for follow-up questions
 
@@ -46,7 +56,6 @@ Install Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-
 
 ## Deploying to Databricks Apps
 
@@ -78,18 +87,21 @@ command:
 
 env:
 - name: "SPACE_ID"
-  value: "space_id"
-- name: "DATABRICKS_HOST"
-  value: "databricks_host"
-- name: "DATABRICKS_TOKEN"
-  valueFrom: "secret"
+  value: "01f02a31663e19b0a18f1a2ed7a435a7"
+- name: "DB_HOST"
+  value: "instance-3e8daf18-367d-4ee9-8273-c71f238f9b69.database.cloud.databricks.com"
+- name: "DB_PORT"
+  value: "5432"
+- name: "DB_NAME"
+  value: "databricks_postgres"
 ```
 
-The app.yaml configuration defines the environment variables needed for the Genie API integration. These variables are configured through Databricks Apps secrets, securely storing and accessing sensitive values:
+The `app.yaml` configuration defines the environment variables needed for Genie API and PostgreSQL integration. These variables are configured through Databricks Apps secrets or environment settings, securely storing and accessing sensitive values:
 
-- `SPACE_ID`: The ID of your Genie space, for example, 011xxxxxxxxxxxxxxx5ef
-- `DATABRICKS_HOST`: Your Databricks workspace URL without the https://, for example, e2-demo-field-eng.cloud.databricks.com
-- `DATABRICKS_TOKEN`: Authentication token for API access
+- `SPACE_ID`: The ID of your Genie space (e.g., 011xxxxxxxxxxxxxxx5ef)
+- `DB_HOST`: Hostname of your Databricks PostgreSQL instance
+- `DB_PORT`: Port for your PostgreSQL instance (default: 5432)
+- `DB_NAME`: Name of your PostgreSQL database
 
 For details on how to create an app in Databricks, please refer to the Databricks Apps Documentation.
 
