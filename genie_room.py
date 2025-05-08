@@ -11,6 +11,8 @@ from token_minter import tokenminter
 from chat_database import ChatDatabase
 from models import MessageResponse
 from datetime import datetime, timezone
+from config import config
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -21,13 +23,13 @@ SPACE_ID = os.environ.get("SPACE_ID")
 DATABRICKS_HOST = os.environ.get("DATABRICKS_HOST")
 
 class GenieClient:
-    def __init__(self, host: str, space_id: str):
-        self.host = host
-        self.space_id = space_id
+    def __init__(self):
+        self.host = config.databricks.host
+        self.space_id = config.databricks.space_id
         self.db = ChatDatabase()
-        self.base_url = f"https://{host}/api/2.0/genie/spaces/{space_id}"
+        self.base_url = f"https://{self.host}/api/2.0/genie/spaces/{self.space_id}"
         self.update_headers()
-        logger.info(f"Initialized GenieClient with host: {host}, space_id: {space_id}")
+        logger.info(f"Initialized GenieClient with host: {self.host}, space_id: {self.space_id}")
     
     def update_headers(self) -> None:
         """Update headers with fresh token from token_minter"""
@@ -304,10 +306,7 @@ def process_genie_response(client, conversation_id, message_id, complete_message
 
 def start_new_conversation(question: str) -> Tuple[str, Union[str, pd.DataFrame], Optional[str], str]:
     """Start a new conversation with Genie"""
-    client = GenieClient(
-        host=DATABRICKS_HOST,
-        space_id=SPACE_ID
-    )
+    client = GenieClient()
     
     try:
         # Start a new conversation
@@ -331,10 +330,7 @@ def continue_conversation(conversation_id: str, question: str) -> Tuple[Union[st
     """Send a follow-up message in an existing conversation"""
     logger.info(f"Continuing conversation {conversation_id} with question: {question[:30]}...")
     
-    client = GenieClient(
-        host=DATABRICKS_HOST,
-        space_id=SPACE_ID
-    )
+    client = GenieClient()
     
     try:
         # Send follow-up message in existing conversation

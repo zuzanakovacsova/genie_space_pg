@@ -2,7 +2,7 @@ import threading
 from fastapi import HTTPException
 from datetime import datetime
 import logging
-from db_config import managed_connection
+from db_config import db_manager
 from models import MessageResponse
 from sqlalchemy import text
 import time
@@ -24,7 +24,7 @@ class ChatDatabase:
                 if not ChatDatabase._initialized:  # Double-check pattern
                     try:
                         logger.info("Initializing database tables")
-                        with managed_connection() as conn:
+                        with db_manager.managed_connection() as conn:
                             # Create genie_sessions table
                             conn.execute(text("""
                                 CREATE TABLE IF NOT EXISTS genie_sessions (
@@ -77,7 +77,7 @@ class ChatDatabase:
         """Save a message to a chat session, creating the session if it doesn't exist"""
         try:
             logger.info(f"Starting to save message: session_id={session_id}, user_id={user_id}, message_id={message.message_id}")
-            with managed_connection() as conn:
+            with db_manager.managed_connection() as conn:
                 # Check if session exists
                 result = conn.execute(text(
                     'SELECT session_id FROM genie_sessions WHERE session_id = :session_id AND user_id = :user_id'
@@ -131,7 +131,7 @@ class ChatDatabase:
         """Update or remove the rating for a message."""
         try:
             logger.info(f"Updating message rating: message_id={message_id}, user_id={user_id}, rating={rating}")
-            with managed_connection() as conn:
+            with db_manager.managed_connection() as conn:
                 if rating is None:
                     # Remove the rating
                     conn.execute(text("""
@@ -156,7 +156,7 @@ class ChatDatabase:
         """Get the rating of a message"""
         try:
             logger.debug(f"Getting message rating: message_id={message_id}, user_id={user_id}")
-            with managed_connection() as conn:
+            with db_manager.managed_connection() as conn:
                 result = conn.execute(text("""
                     SELECT rating
                     FROM genie_message_ratings
