@@ -227,7 +227,6 @@ class GenieClient:
         Returns:
             The completed message
         """
-        
         start_time = time.time()
         attempt = 1
         

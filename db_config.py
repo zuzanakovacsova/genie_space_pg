@@ -1,19 +1,15 @@
 import os
 from dotenv import load_dotenv
-from psycopg2 import connect
 import logging
-import threading
-from psycopg2 import pool
 from token_minter import tokenminter
-from databricks import sdk
-from databricks.sdk.core import Config
-from sqlalchemy import create_engine, event, text
+from sqlalchemy import create_engine, event
 import time
+from contextlib import contextmanager
+from sqlalchemy.exc import OperationalError, TimeoutError
 
 logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv(override=True)
-
 
 # PostgreSQL config
 postgres_username = os.getenv("DATABRICKS_CLIENT_ID")
@@ -27,28 +23,35 @@ postgres_pool = create_engine(
     pool_size=5,
     max_overflow=10,
     pool_timeout=30,
-    pool_recycle=1800  # Recycle connections after 30 minutes
+    pool_recycle=1800,  # Recycle connections after 30 minutes
 )
-
-postgres_password = None
-last_password_refresh = time.time()
 
 @event.listens_for(postgres_pool, "do_connect")
 def provide_token(dialect, conn_rec, cargs, cparams):
-    """Refresh OAuth token every 15 minutes for PostgreSQL authentication."""
-    global postgres_password, last_password_refresh
-    if postgres_password is None or time.time() - last_password_refresh > 900:
-        print("Refreshing PostgreSQL OAuth token")
-        postgres_password = tokenminter.get_token()
-        last_password_refresh = time.time()
+    """Provide token for new connection."""
+    try:
+        logger.debug("Attempting to provide token for new connection")
+        cparams["password"] = tokenminter.get_token()
+    except Exception as e:
+        logger.error(f"Error providing token: {str(e)}")
+        raise
 
-    cparams["password"] = postgres_password
+@contextmanager
+def managed_connection():
+    """Context manager for database connections with proper cleanup."""
+    conn = None
+    try:
+        conn = postgres_pool.connect()
+        yield conn
+    except Exception as e:
+        logger.error(f"Error in managed connection: {str(e)}")
+        raise
+    finally:
+        if conn:
+            try:
+                conn.close()
+            except Exception as e:
+                logger.error(f"Error closing connection: {str(e)}")
 
-def get_connection():
-    """Get a connection from the pool."""
-    return postgres_pool.connect()
 
-def release_connection(conn):
-    """Release a connection back to the pool."""
-    conn.close()
 

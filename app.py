@@ -8,10 +8,6 @@ import os
 from dotenv import load_dotenv
 import sqlparse
 from chat_database import ChatDatabase
-from typing import Tuple, Union, Optional
-from flask import Flask, jsonify
-from db_config import get_connection
-from sqlalchemy import text
 import logging
 logger = logging.getLogger(__name__)
 
@@ -401,27 +397,21 @@ def get_model_response(trigger_data, current_messages, chat_history):
     try:
         # Unpack the message_id from genie_query
         response, query_text, genie_message_id = genie_query(user_input)
-        logger.info(f"DB: genie_message_id={genie_message_id}, query_text={query_text}, response={response}")
+        
+        # Create bot response based on response type
         if isinstance(response, str):
             content = dcc.Markdown(response, className="message-text")
         else:
             # Data table response
             df = pd.DataFrame(response)
-            
-            # Store the dataframe as JSON in a hidden div
             table_id = f"table-{len(chat_history)}"
             
-            # Create the table with adjusted styles
             data_table = dash_table.DataTable(
                 id=table_id,
                 data=df.to_dict('records'),
                 columns=[{"name": i, "id": i} for i in df.columns],
-                
-                # Export configuration
                 export_format="csv",
                 export_headers="display",
-                
-                # Other table properties
                 page_size=10,
                 style_table={
                     'display': 'inline-block',
@@ -476,7 +466,6 @@ def get_model_response(trigger_data, current_messages, chat_history):
                     className="query-code-container hidden")
                 ], id={"type": "query-section", "index": query_index}, className="query-section")
             
-            # Create content with table and optional SQL section
             content = html.Div([
                 html.Div([data_table], style={
                     'marginBottom': '20px',
@@ -510,10 +499,20 @@ def get_model_response(trigger_data, current_messages, chat_history):
             ], className="message-content")
         ], className="bot-message message", **{"data-message-id": genie_message_id})
         
-        # Update chat history with both user message and bot response
+        # Update messages and chat history
+        updated_messages = current_messages[:-1] + [bot_response] if current_messages else [bot_response]
+        
+        # Update chat history safely
         if chat_history and len(chat_history) > 0:
-            chat_history[0]["messages"] = current_messages[:-1] + [bot_response]  
-        return current_messages[:-1] + [bot_response], chat_history, {"trigger": False, "message": ""}, False
+            chat_history[0]["messages"] = updated_messages
+        else:
+            chat_history = [{
+                "session_id": 0,
+                "queries": [user_input],
+                "messages": updated_messages
+            }]
+        
+        return updated_messages, chat_history, {"trigger": False, "message": ""}, False
         
     except Exception as e:
         error_msg = f"Sorry, I encountered an error: {str(e)}. Please try again later."
@@ -527,11 +526,20 @@ def get_model_response(trigger_data, current_messages, chat_history):
             ], className="message-content")
         ], className="bot-message message")
         
-        # Update chat history with both user message and error response
-        if chat_history and len(chat_history) > 0:
-            chat_history[0]["messages"] = current_messages[:-1] + [error_response]
+        # Update messages and chat history with error
+        updated_messages = current_messages[:-1] + [error_response] if current_messages else [error_response]
         
-        return current_messages[:-1] + [error_response], chat_history, {"trigger": False, "message": ""}, False
+        # Update chat history safely
+        if chat_history and len(chat_history) > 0:
+            chat_history[0]["messages"] = updated_messages
+        else:
+            chat_history = [{
+                "session_id": 0,
+                "queries": [user_input],
+                "messages": updated_messages
+            }]
+        
+        return updated_messages, chat_history, {"trigger": False, "message": ""}, False
 
 # Toggle sidebar and speech button
 @app.callback(
