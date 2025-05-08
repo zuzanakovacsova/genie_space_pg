@@ -39,6 +39,6 @@ class Config:
 
     @property
     def database_url(self) -> str:
-        return f"postgresql+psycopg://{self.db.username}:@{self.db.host}:{self.db.port}/{self.db.database}"
+        return f"postgresql+psycopg2://{self.db.username}:@{self.db.host}:{self.db.port}/{self.db.database}"
 
 config = Config() 
