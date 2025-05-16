@@ -82,14 +82,15 @@ env:
 ![](./assets/postgres1.png)
 
 2. Go to your app and record the ID of the service principal that the app is using from the DATABRICKS_CLIENT_ID field on the app’s “Environment” page
+
 ![](./assets/postgres2.png)
 
-3. Grant the service principal 
+3. Grant the service principal (DATABRICKS_CLIENT_ID) privileges
 
-Use pg_databricks_create_role SQL function to create a role for PostgreSQL database and assign the appropriate permission to the service principal on the database, schema and tables.
+Use pg_databricks_create_role SQL function to create a role for PostgreSQL database and assign the appropriate privileges to the service principal on the database, schema and tables.
  ![](./assets/postgres3.png)
 
-3. 
+
 ## Resources
 
 - [Databricks Genie Documentation](https://docs.databricks.com/aws/en/genie)
