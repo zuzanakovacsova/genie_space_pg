@@ -77,6 +77,29 @@ env:
 
 ![](./assets/genie-space6.png)
 
+5. Grant the service principal appropriate privileges to the underlying resources such as catalog, schema and tables.
+
+   note: I am using ALL PRIVILEGES for demo purpose but you can do use catalog on catalog, use schema on schema and select on tables
+
+![](./assets/table1.png)
+
+![](./assets/table2.png)
+
+![](./assets/table3.png)
+
+6. Troubleshooting issues:
+   
+   For trouble shooting, navigate to the genie room monitoring page and check if the query has been sent successfully to the genie room via the API. 
+
+![](./assets/troubleshooting1.png)
+
+   Click open the query and check if there is any error or any permission issues.
+
+
+![](./assets/troubleshooting2.png)
+
+
+
 ### Connect to PostgreSQL Database
 1. Create an instance and get the connection details.
 ![](./assets/postgres1.png)
