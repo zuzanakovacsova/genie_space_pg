@@ -1,8 +1,8 @@
 # Databricks Genie API Integration Demo
 
 ![](./assets/genie_room0.png)
-![](./assets/genie_pg1.png)
-![](./assets/genie_pg2.png)
+![](./assets/genie-space.png)
+![](./assets/genie-space4.png)
 ![](./assets/genie_pg3.png)
 ![](./assets/genie_pg4.png)
 ![](./assets/genie_pg5.png)
@@ -39,46 +39,18 @@ This demo shows how to create a simple interface that connects to the Genie API,
 2. View generated SQL and results
 3. Ask follow-up questions that maintain context
 
-## Environment Setup
 
-Clone the repository:
+## Deploying to Databricks apps
+
+1. Clone the repository to workspace directory such as 
+/Workspace/Users/wenwen.xie@databricks.com/genie_space
 ```bash
-git clone <repository-url>
+git clone https://github.com/vivian-xie-db/genie_space_pg.git
 ```
+![](./assets/genie-space1.png)
 
-Create and activate a Python virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-```
 
-Install Python dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## Deploying to Databricks Apps
-
-This application is designed to be deployed as a Databricks App, which provides several advantages:
-
-- **Secure Authentication**: Leverages Databricks' built-in authentication
-- **Access Control**: Inherits workspace permissions
-- **Data Proximity**: Runs close to your data for optimal performance
-- **Simplified Deployment**: No need for external hosting or infrastructure
-
-### a. Install the Databricks CLI:
-
-```bash
-brew install databricks
-```
-
-### b. Create the app in your workspace:
-
-```bash
-databricks apps create genie-app
-```
-
-### c. Create an app.yaml file in the root directory:
+2. Change the "SPACE_ID" environment value to the ID of your Genie space, for example, 01f02a31663e19b0a18f1a2ed7a435a7 in the app.yaml file in the root directory:
 
 ```yaml
 command:
@@ -87,37 +59,37 @@ command:
 
 env:
 - name: "SPACE_ID"
-  value: "01f02a31663e19b0a18f1a2ed7a435a7"
-- name: "DB_HOST"
-  value: "instance-3e8daf18-367d-4ee9-8273-c71f238f9b69.database.cloud.databricks.com"
-- name: "DB_PORT"
-  value: "5432"
-- name: "DB_NAME"
-  value: "databricks_postgres"
+  value: "space_id"
+
 ```
+![](./assets/genie-space7.png)
 
-The `app.yaml` configuration defines the environment variables needed for Genie API and PostgreSQL integration. These variables are configured through Databricks Apps secrets or environment settings, securely storing and accessing sensitive values:
+3. Create an app in the Databricks apps interface and then deploy the path to the code
 
-- `SPACE_ID`: The ID of your Genie space (e.g., 011xxxxxxxxxxxxxxx5ef)
-- `DB_HOST`: Hostname of your Databricks PostgreSQL instance
-- `DB_PORT`: Port for your PostgreSQL instance (default: 5432)
-- `DB_NAME`: Name of your PostgreSQL database
+![](./assets/genie-space2.png)
 
-For details on how to create an app in Databricks, please refer to the Databricks Apps Documentation.
 
-### d. Sync your local files to Databricks workspace:
+4. Grant the app service principal permission can_use to the SQL warehouse that powers genie
 
-```bash
-# Add node_modules/ and venv/ to .gitignore first if not already present
-databricks sync --watch . /Workspace/Users/<your-email>/genie-app
-```
+![](./assets/genie-space5.png)
 
-### e. Deploy the app:
 
-```bash
-databricks apps deploy genie-app --source-code-path /Workspace/Users/<your-email>/genie-app
-```
 
+![](./assets/genie-space6.png)
+
+### Connect to PostgreSQL Database
+1. Create an instance and get the connection details.
+![](./assets/postgres1.png)
+
+2. Go to your app and record the ID of the service principal that the app is using from the DATABRICKS_CLIENT_ID field on the app’s “Environment” page
+![](./assets/postgres2.png)
+
+3. Grant the service principal 
+
+Use pg_databricks_create_role SQL function to create a role for PostgreSQL database and assign the appropriate permission to the service principal on the database, schema and tables.
+ ![](./assets/postgres3.png)
+
+3. 
 ## Resources
 
 - [Databricks Genie Documentation](https://docs.databricks.com/aws/en/genie)

@@ -24,17 +24,21 @@ class DatabricksConfig:
 class Config:
     def __init__(self):
         load_dotenv(override=True)
+        
+        # Database configuration
         self.db = DatabaseConfig(
-            username=os.getenv("DATABRICKS_CLIENT_ID"),
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            database=os.getenv("DB_NAME")
+            username=os.getenv("DATABRICKS_CLIENT_ID", ""),  # This appears to be used as the username
+            host=os.getenv("DB_HOST", ""),
+            port=os.getenv("DB_PORT", "5432"),
+            database=os.getenv("DB_NAME", "")
         )
+        
+        # Databricks configuration
         self.databricks = DatabricksConfig(
-            client_id=os.getenv("DATABRICKS_CLIENT_ID"),
-            client_secret=os.getenv("DATABRICKS_CLIENT_SECRET"),
-            host=os.getenv("DATABRICKS_HOST"),
-            space_id=os.getenv("SPACE_ID")
+            client_id=os.getenv("DATABRICKS_CLIENT_ID", ""),
+            client_secret=os.getenv("DATABRICKS_CLIENT_SECRET", ""),
+            host=os.getenv("DATABRICKS_HOST", ""),
+            space_id=os.getenv("SPACE_ID", "")
         )
 
     @property
