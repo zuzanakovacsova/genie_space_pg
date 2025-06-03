@@ -68,8 +68,10 @@ env:
 
 ![](./assets/genie-space2.png)
 
+4. Grant the service principal can_run permission to the genie space.
+![](./assets/genie-space9.png)
 
-4. Grant the app service principal permission can_use to the SQL warehouse that powers genie
+5. Grant the app service principal permission can_use to the SQL warehouse that powers genie
 
 ![](./assets/genie-space5.png)
 
@@ -77,7 +79,7 @@ env:
 
 ![](./assets/genie-space6.png)
 
-5. Grant the service principal appropriate privileges to the underlying resources such as catalog, schema and tables.
+6. Grant the service principal appropriate privileges to the underlying resources such as catalog, schema and tables.
 
    note: I am using ALL PRIVILEGES for demo purpose but you can do use catalog on catalog, use schema on schema and select on tables
 
@@ -87,7 +89,7 @@ env:
 
 ![](./assets/table3.png)
 
-6. Troubleshooting issues:
+7. Troubleshooting issues:
    
    For trouble shooting, navigate to the genie room monitoring page and check if the query has been sent successfully to the genie room via the API. 
 
