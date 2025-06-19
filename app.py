@@ -18,15 +18,14 @@ app = dash.Dash(
 )
 
 # Add default welcome text that can be customized
-DEFAULT_WELCOME_TITLE = "Supply Chain Optimization"
-DEFAULT_WELCOME_DESCRIPTION = "Analyze your Supply Chain Performance leveraging AI/BI Dashboard. Deep dive into your data and metrics."
+DEFAULT_WELCOME_TITLE = "GAA results bot"
+DEFAULT_WELCOME_DESCRIPTION = "Track the performance of your favoure GAA teams and players with Genie, your personal sports assistant. Ask questions about the latest GAA results, player stats and team performance."
 
 # Add default suggestion questions
 DEFAULT_SUGGESTIONS = [
-    "What tables are there and how are they connected? Give me a short summary.",
-    "Which distribution center has the highest chance of being a bottleneck?",
-    "Explain the dataset",
-    "What was the demand for our products by week in 2024?"
+    "Which women's team won the latest NFL?",
+    "How many teams participated in the 2025 Allianz Hurling League?"
+   
 ]
 
 # Define the layout
