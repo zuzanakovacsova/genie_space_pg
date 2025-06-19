@@ -192,6 +192,16 @@ app.layout = html.Div([
                             html.Div("How many teams participated in the 2025 Allianz Hurling League?",
                                    className="suggestion-text", id="suggestion-2-text")
                         ], id="suggestion-2", className="suggestion-button"),
+                        html.Button([
+                            html.Div(className="suggestion-icon"),
+                            html.Div("Which team lost the most matches in the NFL league?",
+                                   className="suggestion-text", id="suggestion-3-text")
+                        ], id="suggestion-3", className="suggestion-button"),
+                        html.Button([
+                            html.Div(className="suggestion-icon"),
+                            html.Div("Which team had the highest ELO rating in 2001?",
+                                   className="suggestion-text", id="suggestion-4-text")
+                        ], id="suggestion-4", className="suggestion-button")
                     ], className="suggestion-buttons")
                 ], id="welcome-container", className="welcome-container visible"),
                 
