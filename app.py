@@ -56,7 +56,13 @@ app.layout = html.Div([
                 html.Div([], className="chat-list", id="chat-list")
             ], id="sidebar", className="sidebar")
         ], id="left-component", className="left-component"),
-        
+        html.Div([
+            html.Iframe(
+            src="https://adb-984752964297111.11.azuredatabricks.net/embed/dashboardsv3/01f04d251f731c8794bd3d270db5a14c?o=984752964297111",
+            width='100%',
+            height='600'
+            )
+        ])
         html.Div([
             html.Div("Genie Space", id="logo-container", className="logo-container")
         ], className="nav-center"),
