@@ -184,24 +184,14 @@ app.layout = html.Div([
                     html.Div([
                         html.Button([
                             html.Div(className="suggestion-icon"),
-                            html.Div("What tables are there and how are they connected? Give me a short summary.", 
+                            html.Div("Which women's team won the latest NFL?", 
                                    className="suggestion-text", id="suggestion-1-text")
                         ], id="suggestion-1", className="suggestion-button"),
                         html.Button([
                             html.Div(className="suggestion-icon"),
-                            html.Div("Which distribution center has the highest chance of being a bottleneck?",
+                            html.Div("How many teams participated in the 2025 Allianz Hurling League?",
                                    className="suggestion-text", id="suggestion-2-text")
                         ], id="suggestion-2", className="suggestion-button"),
-                        html.Button([
-                            html.Div(className="suggestion-icon"),
-                            html.Div("Explain the dataset",
-                                   className="suggestion-text", id="suggestion-3-text")
-                        ], id="suggestion-3", className="suggestion-button"),
-                        html.Button([
-                            html.Div(className="suggestion-icon"),
-                            html.Div("What was the demand for our products by week in 2024?",
-                                   className="suggestion-text", id="suggestion-4-text")
-                        ], id="suggestion-4", className="suggestion-button")
                     ], className="suggestion-buttons")
                 ], id="welcome-container", className="welcome-container visible"),
                 
