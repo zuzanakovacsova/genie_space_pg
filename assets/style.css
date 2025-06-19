@@ -812,7 +812,7 @@ body::-webkit-scrollbar {
 .model-icon {
   width: 20px;
   height: 20px;
-  background-image: url("buttonIcon.svg");
+  background-image: url("buttonIcon.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -832,8 +832,8 @@ body::-webkit-scrollbar {
     border-radius: 4px;
 }
 .genie-logo {
-    width: 24px;
-    height: 24px;
+    width: 48px;
+    height: 48px;
     background-image: url("genie_logo.png");
     background-size: contain;
     background-repeat: no-repeat;
