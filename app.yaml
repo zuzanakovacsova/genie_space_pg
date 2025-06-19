@@ -10,6 +10,6 @@ env:
 - name: "DB_PORT"
   value: "5432"
 - name: "DB_NAME"
-  value: "zuzanak"
+  value: "databricks_postgres"
 - name: "DB_USER"
   value: "zuzana.kovacsova@databricks.com"
