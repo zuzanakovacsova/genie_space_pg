@@ -269,6 +269,8 @@ def format_sql_query(sql_query):
      Input("chat-input-fixed", "n_submit")],
     [State("suggestion-1-text", "children"),
      State("suggestion-2-text", "children"),
+     State("suggestion-3-text", "children"),
+     State("suggestion-4-text", "children"),
      State("chat-input-fixed", "value"),
      State("chat-messages", "children"),
      State("welcome-container", "className"),
@@ -727,6 +729,8 @@ def toggle_query_visibility(n_clicks):
      State("welcome-description", "children"),
      State("suggestion-1-text", "children"),
      State("suggestion-2-text", "children"),
+     State("suggestion-3-text", "children"),
+     State("suggestion-4-text", "children")],
     prevent_initial_call=True
 )
 def open_modal(n_clicks, current_title, current_description, s1, s2, s3, s4):
@@ -739,6 +743,8 @@ def open_modal(n_clicks, current_title, current_description, s1, s2, s3, s4):
      Output("welcome-description", "children", allow_duplicate=True),
      Output("suggestion-1-text", "children", allow_duplicate=True),
      Output("suggestion-2-text", "children", allow_duplicate=True),
+     Output("suggestion-3-text", "children", allow_duplicate=True),
+     Output("suggestion-4-text", "children", allow_duplicate=True),
      Output("edit-welcome-modal", "is_open", allow_duplicate=True)],
     [Input("save-welcome-text", "n_clicks"),
      Input("close-modal", "n_clicks")],
@@ -751,7 +757,9 @@ def open_modal(n_clicks, current_title, current_description, s1, s2, s3, s4):
      State("welcome-title", "children"),
      State("welcome-description", "children"),
      State("suggestion-1-text", "children"),
-     State("suggestion-2-text", "children")],
+     State("suggestion-2-text", "children"),
+     State("suggestion-3-text", "children"),
+     State("suggestion-4-text", "children")],
     prevent_initial_call=True
 )
 def handle_modal_actions(save_clicks, close_clicks,
