@@ -62,7 +62,7 @@ app.layout = html.Div([
             width='100%',
             height='600'
             )
-        ])
+        ]),
         html.Div([
             html.Div("Genie Space", id="logo-container", className="logo-container")
         ], className="nav-center"),
