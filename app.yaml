@@ -4,12 +4,12 @@ command:
 
 env:
 - name: "SPACE_ID"
-  value: "01f02a31663e19b0a18f1a2ed7a435a7"
+  value: "01f04cfe4c8e1e83a9950c58631eb42f"
 - name: "DB_HOST"
-  value: "instance-3e8daf18-367d-4ee9-8273-c71f238f9b69.database.cloud.databricks.com"
+  value: "instance-f9da02db-1194-45e2-a3f3-d3072141b145.database.azuredatabricks.net"
 - name: "DB_PORT"
   value: "5432"
 - name: "DB_NAME"
-  value: "databricks_postgres"
+  value: "zuzanak"
 - name: "DB_USER"
-  value: "wenwen.xie@databricks.com"
+  value: "zuzana.kovacsova@databricks.com"
