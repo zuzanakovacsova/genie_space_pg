@@ -79,13 +79,13 @@ app.layout = html.Div([
         html.Div([
             # Chat content
             html.Div([
-                html.Div([
-                    html.Iframe(
-                    src="https://adb-984752964297111.11.azuredatabricks.net/embed/dashboardsv3/01f04d251f731c8794bd3d270db5a14c?o=984752964297111",
-                    width='100%',
-                    height='600'
-                    )
-                ], className="dashboard-container"),
+                # html.Div([
+                #     html.Iframe(
+                #     src="https://adb-984752964297111.11.azuredatabricks.net/embed/dashboardsv3/01f04d251f731c8794bd3d270db5a14c?o=984752964297111",
+                #     width='100%',
+                #     height='600'
+                #     )
+                # ], className="dashboard-container"),
                 # Welcome container
                 html.Div([
                     html.Div([html.Div([
